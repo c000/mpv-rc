@@ -7,6 +7,7 @@ pub struct App {
     bottom_status: String,
 
     clients: Vec<client::Client>,
+    update_count: usize,
 }
 
 impl<'a> eframe::App for App {
@@ -21,6 +22,8 @@ impl<'a> eframe::App for App {
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
                     egui::widgets::global_dark_light_mode_switch(ui);
+                    ui.label(format!("{}", self.update_count));
+                    self.update_count += 1;
                     ui.separator();
                 });
             });
