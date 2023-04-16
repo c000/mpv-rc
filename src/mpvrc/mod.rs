@@ -12,10 +12,16 @@ pub struct App {
 impl<'a> eframe::App for App {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
-            ui.label(if self.bottom_status.is_empty() {
-                &"mpv Remote Controller"
-            } else {
-                self.bottom_status.as_str()
+            ui.horizontal(|ui| {
+                ui.label(if self.bottom_status.is_empty() {
+                    &"mpv Remote Controller"
+                } else {
+                    self.bottom_status.as_str()
+                });
+
+                ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
+                    egui::widgets::global_dark_light_mode_switch(ui);
+                });
             });
         });
 
@@ -43,7 +49,7 @@ impl<'a> eframe::App for App {
                 });
             });
 
-        egui::CentralPanel::default().show(ctx, |_uii| {
+        egui::CentralPanel::default().show(ctx, |_ui| {
             self.clients.retain_mut(|client| {
                 let mut open = true;
                 egui::Window::new(client.title())
