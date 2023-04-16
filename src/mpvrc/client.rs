@@ -30,8 +30,6 @@ impl Client {
     }
 
     pub fn ui(&mut self, ui: &mut egui::Ui) {
-        self.command.ui(ui);
-
         ui.horizontal(|ui| {
             if ui.button("+").clicked() {
                 self.command.add()
@@ -40,6 +38,8 @@ impl Client {
                 self.command.del()
             }
         });
+
+        self.command.ui(ui);
 
         match self.read() {
             Ok(l) => {
@@ -84,42 +84,66 @@ impl Client {
     }
 }
 
-#[derive(Default)]
 struct CommandBuf {
-    command: String,
-    args: Vec<String>,
+    len: usize,
+    cmds: Vec<String>,
+}
+
+impl Default for CommandBuf {
+    fn default() -> Self {
+        Self {
+            len: 1,
+            cmds: vec!["".into()],
+        }
+    }
 }
 
 impl CommandBuf {
     fn ui(&mut self, ui: &mut egui::Ui) {
-        ui.horizontal(|ui| {
-            ui.label("0");
-            ui.centered_and_justified(|ui| {
-                ui.text_edit_singleline(&mut self.command);
-            })
-        });
+        let mut add = false;
+        let mut del = false;
 
-        for (i, a) in &mut self.args.iter_mut().enumerate() {
+        for (i, a) in &mut self.cmds[..self.len].iter_mut().enumerate() {
             ui.horizontal(|ui| {
-                ui.label(format! {"{}",i+1});
-                ui.text_edit_singleline(a);
+                ui.label(format! {"{}",i});
+                ui.centered_and_justified(|ui| {
+                    let e = egui::TextEdit::singleline(a)
+                        .hint_text("CTRL+I to add / CTRL+O to del")
+                        .show(ui)
+                        .response;
+
+                    add |= e.has_focus()
+                        && ui.input(|i| i.modifiers.ctrl && i.key_pressed(egui::Key::I));
+
+                    del |= e.has_focus()
+                        && ui.input(|i| i.modifiers.ctrl && i.key_pressed(egui::Key::O));
+                });
             });
+        }
+
+        if add {
+            self.add();
+        }
+
+        if del {
+            self.del();
         }
     }
 
     fn add(&mut self) {
-        self.args.push(Default::default());
+        self.len += 1;
+        if self.cmds.len() < self.len {
+            self.cmds.resize(self.len, Default::default());
+        }
     }
 
     fn del(&mut self) {
-        self.args.pop();
+        if 1 < self.len {
+            self.len -= 1;
+        }
     }
 
     fn encode(&self) -> serde_json::Value {
-        let cmd = std::iter::once(self.command.as_str())
-            .chain(self.args.iter().map(String::as_str))
-            .collect::<Vec<&str>>();
-
-        json!({ "command": cmd })
+        json!({ "command": self.cmds[..self.len] })
     }
 }
