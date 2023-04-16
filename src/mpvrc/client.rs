@@ -92,19 +92,19 @@ struct CommandBuf {
 
 impl CommandBuf {
     fn ui(&mut self, ui: &mut egui::Ui) {
-        ui.vertical(|ui| {
-            ui.horizontal_top(|ui| {
-                ui.label("0");
+        ui.horizontal(|ui| {
+            ui.label("0");
+            ui.centered_and_justified(|ui| {
                 ui.text_edit_singleline(&mut self.command);
-            });
-
-            for (i, a) in &mut self.args.iter_mut().enumerate() {
-                ui.horizontal(|ui| {
-                    ui.label(format! {"{}",i+1});
-                    ui.text_edit_singleline(a);
-                });
-            }
+            })
         });
+
+        for (i, a) in &mut self.args.iter_mut().enumerate() {
+            ui.horizontal(|ui| {
+                ui.label(format! {"{}",i+1});
+                ui.text_edit_singleline(a);
+            });
+        }
     }
 
     fn add(&mut self) {
