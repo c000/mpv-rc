@@ -1,9 +1,11 @@
 mod addui;
 mod client;
+mod command;
 
 #[derive(Default)]
 pub struct App {
     addui: addui::AddUi,
+    commands: Vec<command::Command>,
     bottom_status: String,
 
     clients: Vec<client::Client>,
@@ -32,17 +34,44 @@ impl eframe::App for App {
         egui::SidePanel::left("left_panel")
             .default_width(0.0)
             .show(ctx, |ui| {
-                match self.addui.ui(ui) {
-                    addui::AddUiResult::Add(path) => match client::Client::new(&path) {
-                        Ok(c) => self.clients.push(c),
-                        Err(e) => {
-                            self.bottom_status = format!("{:?}", e);
-                        }
-                    },
-                    addui::AddUiResult::Nop => (),
-                }
+                egui::ScrollArea::vertical().show(ui, |ui| {
+                    match self.addui.ui(ui) {
+                        addui::AddUiResult::Add(path) => match client::Client::new(&path) {
+                            Ok(c) => self.clients.push(c),
+                            Err(e) => {
+                                self.bottom_status = format!("{:?}", e);
+                            }
+                        },
+                        addui::AddUiResult::Nop => (),
+                    }
 
-                ui.separator();
+                    ui.separator();
+
+                    ui.label("Commands");
+                    self.commands.retain_mut(|c| {
+                        let mut keep = true;
+                        ui.group(|ui| {
+                            ui.horizontal(|ui| {
+                                ui.heading(c.title());
+                                ui.with_layout(
+                                    egui::Layout::right_to_left(egui::Align::Min),
+                                    |ui| {
+                                        if ui.button("x").clicked() {
+                                            keep = false;
+                                        }
+                                    },
+                                );
+                            });
+                            c.ui(ui);
+                        });
+                        keep
+                    });
+                    ui.vertical_centered(|ui| {
+                        if ui.button(" + ").clicked() {
+                            self.commands.push(Default::default());
+                        }
+                    });
+                });
 
                 ui.with_layout(egui::Layout::bottom_up(egui::Align::Min), |ui| {
                     ui.horizontal(|ui| {
@@ -59,7 +88,7 @@ impl eframe::App for App {
                 egui::Window::new(client.title())
                     .open(&mut open)
                     .show(ctx, |ui| {
-                        client.ui(ui);
+                        client.ui(ui, &self.commands);
                     });
                 open
             });
