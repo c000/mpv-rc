@@ -10,7 +10,7 @@ pub struct App {
     update_count: usize,
 }
 
-impl<'a> eframe::App for App {
+impl eframe::App for App {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
             ui.horizontal(|ui| {
