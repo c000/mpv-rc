@@ -1,3 +1,7 @@
+use std::path::Path;
+
+use anyhow::Context;
+use serde::ser::SerializeMap;
 use serde_json::json;
 
 pub struct Command {
@@ -15,6 +19,60 @@ impl Default for Command {
             len: 2,
             cmds: vec!["show-text".into(), "from mpv-rc".into()],
         }
+    }
+}
+
+impl serde::Serialize for Command {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut m = serializer.serialize_map(Some(2))?;
+        m.serialize_entry("title", self.title())?;
+        m.serialize_entry("cmds", &self.cmds[..self.len])?;
+        m.end()
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for Command {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        struct CommandVisitor;
+
+        impl<'de> serde::de::Visitor<'de> for CommandVisitor {
+            type Value = Command;
+
+            fn expecting(&self, formatter: &mut std::fmt::Formatter) -> std::fmt::Result {
+                formatter.write_str("map")
+            }
+
+            fn visit_map<A>(self, mut map: A) -> Result<Self::Value, A::Error>
+            where
+                A: serde::de::MapAccess<'de>,
+            {
+                let mut title = Default::default();
+                let mut cmds = vec![];
+
+                while let Some(k) = map.next_key::<String>()? {
+                    match k.as_str() {
+                        "title" => title = map.next_value()?,
+                        "cmds" => cmds = map.next_value()?,
+                        _ => (),
+                    }
+                }
+
+                Ok(Command {
+                    id: rand::random(),
+                    title,
+                    len: cmds.len(),
+                    cmds,
+                })
+            }
+        }
+
+        deserializer.deserialize_map(CommandVisitor)
     }
 }
 
@@ -89,4 +147,21 @@ impl Command {
     pub fn encode(&self) -> serde_json::Value {
         json!({ "command": self.cmds[..self.len] })
     }
+}
+
+pub fn load_from<P>(path: P) -> anyhow::Result<Vec<Command>>
+where
+    P: AsRef<Path>,
+{
+    let f = std::fs::File::open(path).context("can't open file")?;
+    serde_json::from_reader(f).context("can't decode")
+}
+
+pub fn save_to<P>(path: P, value: &[Command]) -> anyhow::Result<()>
+where
+    P: AsRef<Path>,
+{
+    let f = std::fs::File::create(path).context("can't create filE")?;
+    serde_json::to_writer_pretty(f, value)?;
+    Ok(())
 }
