@@ -58,7 +58,7 @@ impl eframe::App for App {
 
                     ui.horizontal(|ui| {
                         if ui.button("Load").clicked() {
-                            if let Some(path) = win::get_open_file_name() {
+                            if let Some(path) = win::get_open_file_name(Some(&win::FILTER_JSON)) {
                                 match command::load_from(path) {
                                     Ok(v) => self.commands = v,
                                     Err(e) => self.bottom_status = format!("can't load {:?}", e),
@@ -66,7 +66,7 @@ impl eframe::App for App {
                             }
                         }
                         if ui.button("Save").clicked() {
-                            if let Some(path) = win::get_save_file_name() {
+                            if let Some(path) = win::get_save_file_name(Some(&win::FILTER_JSON)) {
                                 if let Err(e) = command::save_to(path, &self.commands) {
                                     self.bottom_status = format!("can't save {:?}", e);
                                 }
