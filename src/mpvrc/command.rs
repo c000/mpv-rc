@@ -87,7 +87,6 @@ impl Command {
 
         let commands = egui::containers::CollapsingHeader::new("Config")
             .id_source(self.id)
-            .default_open(true)
             .show_unindented(ui, |ui| {
                 ui.horizontal(|ui| {
                     ui.label("Title:");
