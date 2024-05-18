@@ -28,7 +28,7 @@ impl serde::Serialize for Command {
         S: serde::Serializer,
     {
         let mut m = serializer.serialize_map(Some(2))?;
-        m.serialize_entry("title", self.title())?;
+        m.serialize_entry("title", &self.title)?;
         m.serialize_entry("cmds", &self.cmds[..self.len])?;
         m.end()
     }
@@ -77,8 +77,12 @@ impl<'de> serde::Deserialize<'de> for Command {
 }
 
 impl Command {
-    pub fn title(&self) -> &str {
-        &self.title
+    pub fn title(&self) -> String {
+        if self.title.is_empty() {
+            self.cmds[..self.len].join(" ")
+        } else {
+            self.title.to_string()
+        }
     }
 
     pub fn ui(&mut self, ui: &mut egui::Ui) {
