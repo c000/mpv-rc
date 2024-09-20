@@ -9,7 +9,7 @@ edition = "2021"
 anyhow = "1.0.70"
 eframe = "0.28.1"
 egui = "0.28.1"
-interprocess = { version = "1.2.1", default-features = false }
+interprocess = { version = "2.2.1", default-features = false }
 lazy_static = "1.4.0"
 rand = { version = "0.8.5", default-features = false, features = ["std_rng", "std"] }
 serde = { version = "1.0.159", features = ["derive"] }

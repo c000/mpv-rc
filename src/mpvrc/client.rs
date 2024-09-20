@@ -2,18 +2,18 @@ use std::io::{ErrorKind, Read, Write};
 
 use super::command;
 use anyhow::{Context, Result};
-use interprocess::os::windows::named_pipe::DuplexBytePipeStream;
+use interprocess::os::windows::named_pipe::{pipe_mode::Bytes, DuplexPipeStream};
 
 pub struct Client {
     path: String,
-    pipe: DuplexBytePipeStream,
+    pipe: DuplexPipeStream<Bytes>,
 
     status: String,
 }
 
 impl Client {
     pub fn new(path: &str) -> std::io::Result<Self> {
-        let pipe = DuplexBytePipeStream::connect(path)?;
+        let pipe = DuplexPipeStream::connect_by_path(path)?;
         pipe.set_nonblocking(true)?;
 
         Ok(Self {

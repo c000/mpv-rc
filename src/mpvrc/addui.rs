@@ -7,7 +7,7 @@ pub enum AddUiResult {
     Add(String),
 }
 
-const DEFAULT_PATH: &str = r"mpv\default";
+const DEFAULT_PATH: &str = r"\\.\pipe\mpv\default";
 
 impl Default for AddUi {
     fn default() -> Self {
