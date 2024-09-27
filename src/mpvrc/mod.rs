@@ -1,6 +1,7 @@
 mod addui;
 mod client;
 mod command;
+mod global_keybind;
 mod win;
 
 #[derive(Default)]
@@ -32,9 +33,10 @@ impl eframe::App for App {
                     ui.separator();
 
                     ui.label("Commands");
+                    let mut current_index = 0;
                     self.commands.retain_mut(|c| {
                         let mut keep = true;
-                        ui.group(|ui| {
+                        let g = ui.group(|ui| {
                             ui.horizontal(|ui| {
                                 ui.heading(c.title());
                                 ui.with_layout(
@@ -46,8 +48,17 @@ impl eframe::App for App {
                                     },
                                 );
                             });
-                            c.ui(ui);
+                            c.ui(ui)
                         });
+
+                        current_index += 1;
+                        global_keybind::request_focus_on_ctrl(
+                            current_index,
+                            ui,
+                            g.inner.header_response.id,
+                            g.response.rect,
+                        );
+
                         keep
                     });
                     ui.vertical_centered(|ui| {
