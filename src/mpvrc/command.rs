@@ -85,7 +85,7 @@ impl Command {
         }
     }
 
-    pub fn ui(&mut self, ui: &mut egui::Ui) {
+    pub fn ui(&mut self, ui: &mut egui::Ui) -> egui::CollapsingResponse<()> {
         let mut add = false;
         let mut del = false;
 
@@ -132,6 +132,8 @@ impl Command {
         if del {
             self.del();
         }
+
+        commands
     }
 
     fn add(&mut self) {
