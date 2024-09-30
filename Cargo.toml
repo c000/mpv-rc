@@ -7,8 +7,8 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.70"
-eframe = "0.28.1"
-egui = "0.28.1"
+eframe = "0.29.0"
+egui = "0.29.0"
 interprocess = { version = "2.2.1", default-features = false }
 lazy_static = "1.4.0"
 rand = { version = "0.8.5", default-features = false, features = ["std_rng", "std"] }
