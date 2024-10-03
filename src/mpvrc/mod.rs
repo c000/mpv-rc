@@ -21,7 +21,7 @@ impl eframe::App for App {
             .show(ctx, |ui| {
                 egui::ScrollArea::vertical().show(ui, |ui| {
                     match self.addui.ui(ui) {
-                        addui::AddUiResult::Add(path) => match client::Client::new(&path) {
+                        addui::AddUiResult::Add(path) => match client::Client::new(path) {
                             Ok(c) => self.clients.push(c),
                             Err(e) => {
                                 self.bottom_status = format!("{:?}", e);
