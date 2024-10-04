@@ -90,7 +90,7 @@ impl Command {
         let mut del = false;
 
         let commands = egui::containers::CollapsingHeader::new("Config")
-            .id_source(self.id)
+            .id_salt(self.id)
             .show_unindented(ui, |ui| {
                 ui.horizontal(|ui| {
                     ui.label("Title:");
