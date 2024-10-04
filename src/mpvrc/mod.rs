@@ -96,7 +96,7 @@ impl eframe::App for App {
                 });
 
                 ui.with_layout(egui::Layout::right_to_left(egui::Align::Min), |ui| {
-                    egui::widgets::global_dark_light_mode_switch(ui);
+                    egui::widgets::global_theme_preference_switch(ui);
                     if ui.button("Organize windows").clicked() {
                         ui.ctx().memory_mut(|mem| mem.reset_areas());
                     }
