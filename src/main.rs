@@ -11,6 +11,11 @@ fn main() -> Result<(), eframe::Error> {
     eframe::run_native(
         &format!("mpv Remote Controller v{}", VERSION),
         options,
-        Box::new(|_cc| Ok(Box::new(mpvrc::App::default()))),
+        Box::new(|cc| {
+            cc.egui_ctx.style_mut_of(egui::Theme::Dark, |style| {
+                style.visuals.override_text_color = Some(egui::Color32::WHITE);
+            });
+            Ok(Box::new(mpvrc::App::default()))
+        }),
     )
 }
