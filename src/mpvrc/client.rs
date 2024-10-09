@@ -1,4 +1,7 @@
-use std::io::{ErrorKind, Read, Write};
+use std::{
+    fmt::Write as _,
+    io::{ErrorKind, Read, Write},
+};
 
 use super::command;
 use anyhow::{Context, Result};
@@ -12,12 +15,16 @@ pub struct Client {
 }
 
 impl Client {
-    pub fn new(path: &str) -> std::io::Result<Self> {
-        let pipe = DuplexPipeStream::connect_by_path(path)?;
+    pub fn new<P>(path: P) -> std::io::Result<Self>
+    where
+        P: Into<String>,
+    {
+        let path = path.into();
+        let pipe = DuplexPipeStream::connect_by_path(path.as_str())?;
         pipe.set_nonblocking(true)?;
 
         Ok(Self {
-            path: String::from(path),
+            path: path,
             pipe,
             status: "Status".into(),
         })
@@ -45,7 +52,10 @@ impl Client {
                     self.status = l
                 }
             }
-            Err(e) => self.status = format!("{:?}", e),
+            Err(e) => {
+                self.status.clear();
+                write!(self.status, "{:?}", e).unwrap()
+            }
         }
 
         ui.label(&self.status);
@@ -54,7 +64,8 @@ impl Client {
     fn write(&mut self, v: &serde_json::Value) {
         let s = format!("{}\n", serde_json::to_string(v).unwrap());
         if let Err(e) = self.pipe.write_all(s.as_bytes()) {
-            self.status = format!("{:?}", e)
+            self.status.clear();
+            write!(self.status, "{:?}", e).unwrap()
         }
     }
 
