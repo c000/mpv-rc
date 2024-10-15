@@ -2,35 +2,33 @@ use std::{
     char::{decode_utf16, REPLACEMENT_CHARACTER},
     iter,
     mem::size_of,
+    sync::LazyLock,
 };
 
-use lazy_static::lazy_static;
 use winapi::{
     shared::minwindef::MAX_PATH,
     um::commdlg::{OFN_FILEMUSTEXIST, OFN_OVERWRITEPROMPT, OPENFILENAMEW},
 };
 
-lazy_static! {
-    pub static ref FILTER_JSON: Vec<u16> = {
-        iter::empty()
-            .chain(
-                "JSON"
-                    .encode_utf16()
-                    .chain(iter::once(0))
-                    .chain("*.json".encode_utf16())
-                    .chain(iter::once(0)),
-            )
-            .chain(
-                "All"
-                    .encode_utf16()
-                    .chain(iter::once(0))
-                    .chain("*.*".encode_utf16())
-                    .chain(iter::once(0)),
-            )
-            .chain(iter::once(0))
-            .collect()
-    };
-}
+pub static FILTER_JSON: LazyLock<Vec<u16>> = LazyLock::new(|| {
+    iter::empty()
+        .chain(
+            "JSON"
+                .encode_utf16()
+                .chain(iter::once(0))
+                .chain("*.json".encode_utf16())
+                .chain(iter::once(0)),
+        )
+        .chain(
+            "All"
+                .encode_utf16()
+                .chain(iter::once(0))
+                .chain("*.*".encode_utf16())
+                .chain(iter::once(0)),
+        )
+        .chain(iter::once(0))
+        .collect()
+});
 
 pub fn get_open_file_name(filters: Option<&[u16]>) -> Option<String> {
     let mut buf = vec![0u16; MAX_PATH];
