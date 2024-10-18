@@ -24,7 +24,7 @@ impl Client {
         pipe.set_nonblocking(true)?;
 
         Ok(Self {
-            path: path,
+            path,
             pipe,
             status: "Status".into(),
         })

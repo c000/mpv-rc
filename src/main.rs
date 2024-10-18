@@ -1,7 +1,7 @@
 #![windows_subsystem = "windows"]
 mod mpvrc;
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
