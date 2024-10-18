@@ -5,7 +5,7 @@ const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
-        viewport: egui::ViewportBuilder::default().with_inner_size(egui::vec2(640.0, 480.0)),
+        viewport: egui::ViewportBuilder::default().with_inner_size(egui::vec2(960.0, 480.0)),
         ..Default::default()
     };
     eframe::run_native(
@@ -13,7 +13,7 @@ fn main() -> Result<(), eframe::Error> {
         options,
         Box::new(|cc| {
             cc.egui_ctx.style_mut_of(egui::Theme::Dark, |style| {
-                style.visuals.override_text_color = Some(egui::Color32::WHITE);
+                style.visuals.widgets.inactive.fg_stroke.color = egui::Color32::WHITE;
             });
             Ok(Box::new(mpvrc::App::default()))
         }),

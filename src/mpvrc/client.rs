@@ -38,27 +38,29 @@ impl Client {
     where
         I: IntoIterator<Item = &'a command::Command>,
     {
-        ui.horizontal_wrapped(|ui| {
-            for c in commands {
-                if ui.button(c.title()).clicked() {
-                    self.write(&c.encode());
+        ui.vertical(|ui| {
+            ui.horizontal_wrapped(|ui| {
+                for c in commands {
+                    if ui.button(c.title()).clicked() {
+                        self.write(&c.encode());
+                    }
+                }
+            });
+
+            match self.read() {
+                Ok(l) => {
+                    if !l.is_empty() {
+                        self.status = l
+                    }
+                }
+                Err(e) => {
+                    self.status.clear();
+                    write!(self.status, "{:?}", e).unwrap()
                 }
             }
+
+            ui.label(&self.status);
         });
-
-        match self.read() {
-            Ok(l) => {
-                if !l.is_empty() {
-                    self.status = l
-                }
-            }
-            Err(e) => {
-                self.status.clear();
-                write!(self.status, "{:?}", e).unwrap()
-            }
-        }
-
-        ui.label(&self.status);
     }
 
     fn write(&mut self, v: &serde_json::Value) {
