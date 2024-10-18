@@ -90,7 +90,7 @@ impl eframe::App for App {
         egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
             ui.horizontal(|ui| {
                 ui.label(if self.bottom_status.is_empty() {
-                    &"mpv Remote Controller"
+                    "mpv Remote Controller"
                 } else {
                     self.bottom_status.as_str()
                 });

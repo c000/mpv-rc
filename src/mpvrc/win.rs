@@ -33,11 +33,13 @@ pub static FILTER_JSON: LazyLock<Vec<u16>> = LazyLock::new(|| {
 pub fn get_open_file_name(filters: Option<&[u16]>) -> Option<String> {
     let mut buf = vec![0u16; MAX_PATH];
 
-    let mut ofn: OPENFILENAMEW = Default::default();
+    let mut ofn: OPENFILENAMEW = OPENFILENAMEW {
+        lStructSize: size_of::<winapi::um::commdlg::OPENFILENAMEW>() as u32,
+        nMaxFile: buf.len() as u32,
+        Flags: OFN_FILEMUSTEXIST,
+        ..Default::default()
+    };
 
-    ofn.lStructSize = size_of::<winapi::um::commdlg::OPENFILENAMEW>() as u32;
-    ofn.nMaxFile = buf.len() as u32;
-    ofn.Flags = OFN_FILEMUSTEXIST;
     if let Some(f) = filters {
         ofn.lpstrFilter = f.as_ptr();
     }
@@ -55,11 +57,13 @@ pub fn get_open_file_name(filters: Option<&[u16]>) -> Option<String> {
 pub fn get_save_file_name(filters: Option<&[u16]>) -> Option<String> {
     let mut buf = vec![0u16; MAX_PATH];
 
-    let mut ofn: OPENFILENAMEW = Default::default();
+    let mut ofn: OPENFILENAMEW = OPENFILENAMEW {
+        lStructSize: size_of::<winapi::um::commdlg::OPENFILENAMEW>() as u32,
+        nMaxFile: buf.len() as u32,
+        Flags: OFN_OVERWRITEPROMPT,
+        ..Default::default()
+    };
 
-    ofn.lStructSize = size_of::<winapi::um::commdlg::OPENFILENAMEW>() as u32;
-    ofn.nMaxFile = buf.len() as u32;
-    ofn.Flags = OFN_OVERWRITEPROMPT;
     if let Some(f) = filters {
         ofn.lpstrFilter = f.as_ptr();
     }
