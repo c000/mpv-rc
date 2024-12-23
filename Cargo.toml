@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-anyhow = "1.0.94"
+anyhow = "1.0.95"
 eframe = "0.29.0"
 egui = "0.29.0"
 interprocess = { version = "2.2.2", default-features = false }
