@@ -14,7 +14,7 @@ pub struct Command {
 impl Default for Command {
     fn default() -> Self {
         Self {
-            id: rand::random(),
+            id: rand::random_range(1..usize::MAX),
             title: "".into(),
             len: 2,
             cmds: vec!["show-text".into(), "from mpv-rc".into()],
@@ -64,7 +64,7 @@ impl<'de> serde::Deserialize<'de> for Command {
                 }
 
                 Ok(Command {
-                    id: rand::random(),
+                    id: rand::random_range(1..usize::MAX),
                     title,
                     len: cmds.len(),
                     cmds,
