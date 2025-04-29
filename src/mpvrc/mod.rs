@@ -44,6 +44,19 @@ impl eframe::App for App {
                 });
 
                 egui::ScrollArea::vertical().show(ui, |ui| {
+                    ui.group(|ui| {
+                        ui.heading("Connect");
+                        match self.addui.ui(ui) {
+                            addui::AddUiResult::Add(path) => match client::Client::new(path) {
+                                Ok(c) => self.clients.push(c),
+                                Err(e) => {
+                                    self.bottom_status = format!("{:?}", e);
+                                }
+                            },
+                            addui::AddUiResult::Nop => (),
+                        }
+                    });
+
                     ui.label("Commands");
                     let mut current_index = 0;
                     self.commands.retain_mut(|c| {
@@ -77,19 +90,6 @@ impl eframe::App for App {
                     if ui.button("Add⏷").clicked() {
                         self.commands.push(Default::default());
                     }
-
-                    ui.group(|ui| {
-                        ui.heading("Connect");
-                        match self.addui.ui(ui) {
-                            addui::AddUiResult::Add(path) => match client::Client::new(path) {
-                                Ok(c) => self.clients.push(c),
-                                Err(e) => {
-                                    self.bottom_status = format!("{:?}", e);
-                                }
-                            },
-                            addui::AddUiResult::Nop => (),
-                        }
-                    });
                 });
             });
 
