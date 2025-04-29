@@ -1,7 +1,8 @@
 #![windows_subsystem = "windows"]
 mod mpvrc;
 
-const VERSION: &str = env!("CARGO_PKG_VERSION");
+const PKG_NAME: &str = env!("CARGO_PKG_NAME");
+const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn main() -> Result<(), eframe::Error> {
     let options = eframe::NativeOptions {
@@ -9,7 +10,7 @@ fn main() -> Result<(), eframe::Error> {
         ..Default::default()
     };
     eframe::run_native(
-        &format!("mpv Remote Controller v{}", VERSION),
+        &format!("{}: mpv Remote Controller v{}", PKG_NAME, PKG_VERSION),
         options,
         Box::new(|cc| {
             cc.egui_ctx.style_mut_of(egui::Theme::Dark, |style| {
