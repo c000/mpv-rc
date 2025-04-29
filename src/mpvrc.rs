@@ -15,6 +15,15 @@ pub struct App {
     update_count: usize,
 }
 
+impl App {
+    pub fn load_command(&mut self, path: impl AsRef<std::path::Path>) {
+        match command::load_from(path) {
+            Ok(v) => self.commands = v,
+            Err(e) => self.bottom_status = format!("can't load {:?}", e),
+        }
+    }
+}
+
 impl eframe::App for App {
     fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
         egui::SidePanel::left("left_panel")
