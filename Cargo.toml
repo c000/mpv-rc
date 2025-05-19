@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 anyhow = "1.0.98"
-confy = "0.6.1"
+confy = "1.0.0"
 eframe = "0.31.1"
 egui = "0.31.0"
 interprocess = { version = "2.2.3", default-features = false }
