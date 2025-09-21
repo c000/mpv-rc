@@ -38,7 +38,7 @@ impl eframe::App for App {
                                     Err(e) => self.bottom_status = format!("can't load {:?}", e),
                                 }
                             }
-                            filemenu.close_menu();
+                            filemenu.close();
                         }
 
                         if filemenu.button("Save").clicked() {
@@ -47,7 +47,7 @@ impl eframe::App for App {
                                     self.bottom_status = format!("can't save {:?}", e);
                                 }
                             }
-                            filemenu.close_menu();
+                            filemenu.close();
                         }
                     });
                 });
