@@ -29,7 +29,7 @@ impl eframe::App for App {
         egui::SidePanel::left("left_panel")
             .default_width(0.0)
             .show(ctx, |ui| {
-                egui::menu::bar(ui, |ui| {
+                egui::MenuBar::new().ui(ui, |ui| {
                     ui.menu_button("File", |filemenu| {
                         if filemenu.button("Load").clicked() {
                             if let Some(path) = win::get_open_file_name(Some(&win::FILTER_JSON)) {
@@ -38,7 +38,7 @@ impl eframe::App for App {
                                     Err(e) => self.bottom_status = format!("can't load {:?}", e),
                                 }
                             }
-                            filemenu.close_menu();
+                            filemenu.close();
                         }
 
                         if filemenu.button("Save").clicked() {
@@ -47,7 +47,7 @@ impl eframe::App for App {
                                     self.bottom_status = format!("can't save {:?}", e);
                                 }
                             }
-                            filemenu.close_menu();
+                            filemenu.close();
                         }
                     });
                 });
