@@ -8,8 +8,8 @@ edition = "2021"
 [dependencies]
 anyhow = "1.0.102"
 confy = "2.0.0"
-eframe = "0.33.3"
-egui = "0.33.3"
+eframe = "0.34.0"
+egui = "0.34.0"
 interprocess = { version = "2.4.0", default-features = false }
 rand = { version = "0.10.0", default-features = false, features = ["std_rng", "std", "thread_rng"] }
 serde = { version = "1.0.228", features = ["derive"] }
