@@ -76,7 +76,7 @@ impl Client {
         let n = self
             .pipe
             .read(&mut buf)
-            .or_else(|e| match e.kind() {
+            .or_else(|e: std::io::Error| match e.kind() {
                 ErrorKind::BrokenPipe | ErrorKind::WouldBlock => Ok(0),
                 _ => Err(e),
             })

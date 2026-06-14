@@ -25,10 +25,10 @@ impl App {
 }
 
 impl eframe::App for App {
-    fn update(&mut self, ctx: &eframe::egui::Context, _frame: &mut eframe::Frame) {
-        egui::SidePanel::left("left_panel")
-            .default_width(0.0)
-            .show(ctx, |ui| {
+    fn ui(&mut self, ui: &mut egui::Ui, _frame: &mut eframe::Frame) {
+        egui::Panel::left("left_panel")
+            .default_size(0.0)
+            .show_inside(ui, |ui| {
                 egui::MenuBar::new().ui(ui, |ui| {
                     ui.menu_button("File", |filemenu| {
                         if filemenu.button("Load").clicked() {
@@ -102,7 +102,7 @@ impl eframe::App for App {
                 });
             });
 
-        egui::TopBottomPanel::bottom("bottom_panel").show(ctx, |ui| {
+        egui::Panel::bottom("bottom_panel").show_inside(ui, |ui| {
             ui.horizontal(|ui| {
                 ui.label(if self.bottom_status.is_empty() {
                     "mpv Remote Controller"
@@ -122,7 +122,7 @@ impl eframe::App for App {
             });
         });
 
-        egui::CentralPanel::default().show(ctx, |ui| {
+        egui::CentralPanel::default().show_inside(ui, |ui| {
             egui::ScrollArea::vertical().show(ui, |ui| {
                 let mut window_buttons = WindowButtons::new();
                 ui.columns(self.clients.len(), |uis| {
@@ -144,7 +144,7 @@ impl eframe::App for App {
             {
                 let mut window_buttons = WindowButtons::new();
                 for (i, c) in self.clients_hovered.iter_mut().enumerate() {
-                    egui::Window::new(c.title()).show(ctx, |ui| {
+                    egui::Window::new(c.title()).show(ui.ctx(), |ui| {
                         window_buttons.show_right_top_button(ui, i);
                         c.ui(ui, &self.commands);
                     });
